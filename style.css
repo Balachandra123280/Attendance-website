@@ -1,4 +1,6 @@
- body {
+/* Updated Style Sheet */
+
+body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -33,19 +35,26 @@
   background-color: #0056b3;
 }
 
+/* Content Area */
+.content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
 /* Form Sections */
 .form-section {
-  flex: 1;
-  padding: 40px;
   display: none;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  margin-top: 30px;
 }
 
 .form-section h2 {
   margin-bottom: 25px;
   color: #333;
+  text-align: center;
 }
 
 .form-section input,
@@ -87,6 +96,8 @@
   font-weight: bold;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
+
+/* Login Page */
 .login-page {
   background: #f1f1f1;
   display: flex;
@@ -117,8 +128,12 @@
   background: royalblue;
   color: white;
   border: none;
+  border-radius: 6px;
+  font-weight: bold;
   cursor: pointer;
 }
+
+/* Employee Page */
 .employee-page {
   background: #eef3f8;
   display: flex;
@@ -135,3 +150,36 @@
   box-shadow: 0 0 12px #aaa;
   text-align: center;
 }
+
+/* Table Styling */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 100%;
+  margin: 20px auto;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+table th, table td {
+  padding: 12px 15px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+table th {
+  background-color: #007bff;
+  color: white;
+}
+
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table tr:hover {
+  background-color: #e6f7ff;
+}
+
+
