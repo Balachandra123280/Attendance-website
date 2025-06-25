@@ -1,38 +1,160 @@
- <!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login | Attendance Portal</title>
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(120deg, #1e1e1e, #0f3057);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #fff;
+    }
+
+    .marquee {
+      width: 100%;
+      background-color: #222;
+      color: #fcd703;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .login-box {
+      background: #2b2b2b;
+      padding: 40px 35px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .main-heading {
+      font-size: 32px;
+      color: #00bfff;
+      margin-bottom: 5px;
+    }
+
+    .sub-heading {
+      font-size: 18px;
+      color: #ddd;
+      margin-bottom: 25px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 90%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #00bfff;
+      background-color: #1a1a1a;
+      color: #fff;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: #00ffcc;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #00bfff;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0099cc;
+    }
+
+    .error-text {
+      margin-top: 15px;
+      font-size: 15px;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 5px;
+      display: inline-block;
+      color: #721c24;
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+    }
+
+    @media (max-width: 480px) {
+      .login-box {
+        padding: 25px 20px;
+      }
+    }
+  </style>
 </head>
-<body class="login-bg">
-  <marquee class="marquee">PLEASE GIVE YOUR LOGIN CREDENTIALS</marquee>
+<body>
+
+  <div class="marquee">PLEASE GIVE YOUR LOGIN CREDENTIALS</div>
+
   <div class="login-box">
     <h1 class="main-heading">WELCOME</h1>
     <h2 class="sub-heading">ATTENDANCE PORTAL</h2>
+
     <form onsubmit="return checkLogin()">
-      <input type="text" id="username" placeholder="Enter Username" required /><br />
-      <input type="password" id="password" placeholder="Enter Password" required /><br />
+      <input type="text" id="username" placeholder="Enter Username" required />
+      <input type="password" id="password" placeholder="Enter Password" required />
       <button type="submit">Login</button>
     </form>
-    <p id="error" class="error-text"></p>
+
+    <p id="error" class="error-text" style="display: none;"></p>
   </div>
 
   <script>
     function checkLogin() {
-      const u = document.getElementById('username').value;
-      const p = document.getElementById('password').value;
-      if ((u === 'Admin_123' && p === 'Admin_123') || (u === 'Client_123' && p === 'Client_123')) {
-        if (u.startsWith('Admin')) {
-          window.location.href = 'admin.html';
-        } else {
-          window.location.href = 'client.html';
-        }
-        return false;
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorBox = document.getElementById('error');
+
+      // Clear previous message
+      errorBox.style.display = 'none';
+      errorBox.innerText = '';
+
+      // Simple credential match
+      if ((username === 'Admin_123' && password === 'Admin_123') ||
+          (username === 'Client_123' && password === 'Client_123')) {
+        
+        // Redirect to respective dashboards
+        const redirectURL = username.startsWith('Admin') ? 'admin.html' : 'client.html';
+        errorBox.style.display = 'block';
+        errorBox.style.backgroundColor = '#d4edda';
+        errorBox.style.color = '#155724';
+        errorBox.style.border = '1px solid #c3e6cb';
+        errorBox.innerText = '✅ Login successful! Redirecting...';
+
+        setTimeout(() => window.location.href = redirectURL, 1000);
       } else {
-        document.getElementById('error').innerText = 'Invalid credentials. Try again.';
-        return false;
+        errorBox.innerText = '❌ Invalid credentials. Please try again.';
+        errorBox.style.display = 'block';
+        errorBox.style.backgroundColor = '#f8d7da';
+        errorBox.style.color = '#721c24';
+        errorBox.style.border = '1px solid #f5c6cb';
       }
+
+      return false; // prevent form from submitting
     }
   </script>
+
 </body>
 </html>
