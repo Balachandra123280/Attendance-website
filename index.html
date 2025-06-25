@@ -1,0 +1,125 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login | Attendance Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      background-color: #1e1e1e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: white;
+    }
+
+    .marquee {
+      width: 100%;
+      background: #222;
+      color: yellow;
+      padding: 8px;
+      font-size: 14px;
+      overflow: hidden;
+      white-space: nowrap;
+      box-sizing: border-box;
+    }
+
+    .login-box {
+      background: #2c2c2c;
+      padding: 30px 40px;
+      border-radius: 10px;
+      border: 2px solid #00bfff;
+      box-shadow: 0 0 20px rgba(0, 191, 255, 0.4);
+      text-align: center;
+      max-width: 350px;
+      width: 100%;
+    }
+
+    .main-heading {
+      font-size: 28px;
+      color: #00bfff;
+      margin-bottom: 10px;
+    }
+
+    .sub-heading {
+      font-size: 18px;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #00bfff;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #0099cc;
+    }
+
+    .error-text {
+      color: red;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="marquee">PLEASE GIVE YOUR LOGIN CREDENTIALS</div>
+
+  <div class="login-box">
+    <h1 class="main-heading">WELCOME</h1>
+    <h2 class="sub-heading">ATTENDANCE PORTAL</h2>
+    <form onsubmit="return checkLogin()">
+      <input type="text" id="username" placeholder="Enter Username" required /><br />
+      <input type="password" id="password" placeholder="Enter Password" required /><br />
+      <button type="submit">Login</button>
+    </form>
+    <p id="error" class="error-text"></p>
+  </div>
+
+  <script>
+    function checkLogin() {
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value.trim();
+      const error = document.getElementById('error');
+
+      if ((u === 'Admin_123' && p === 'Admin_123') || (u === 'Client_123' && p === 'Client_123')) {
+        error.innerText = '';
+        if (u.startsWith('Admin')) {
+          window.location.href = 'admin.html';
+        } else {
+          window.location.href = 'client.html';
+        }
+        return false;
+      } else {
+        error.innerText = 'Invalid credentials. Try again.';
+        return false;
+      }
+    }
+  </script>
+</body>
+</html>
