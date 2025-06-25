@@ -294,3 +294,14 @@ function downloadCSV(data, filename) {
 
 updateDropdowns();
 renderEmployees();
+
+<script>
+  function showSection(sectionId) {
+    document.querySelectorAll('.form-section').forEach(sec => sec.style.display = 'none');
+    document.getElementById(sectionId).style.display = 'flex';
+  }
+
+  // Show the first section by default
+  window.onload = () => showSection('hubSection');
+</script>
+
