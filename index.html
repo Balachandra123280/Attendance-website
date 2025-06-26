@@ -5,154 +5,63 @@
   <title>Login | Attendance Portal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-      height: 100vh;
-      background: linear-gradient(135deg, #141e30, #243b55);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      overflow: hidden;
-    }
-
-    .marquee {
-      position: absolute;
-      top: 0;
-      width: 100%;
-      background-color: #ffc107;
-      color: #000;
-      padding: 10px;
-      font-weight: bold;
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      animation: marquee 12s linear infinite;
-    }
-
-    @keyframes marquee {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-
-    .login-box {
-      background: rgba(0, 0, 0, 0.75);
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 30px rgba(0, 191, 255, 0.5);
-      width: 100%;
-      max-width: 380px;
-      text-align: center;
-    }
-
-    .main-heading {
-      font-size: 30px;
-      margin-bottom: 10px;
-      color: #00bfff;
-    }
-
-    .sub-heading {
-      font-size: 18px;
-      margin-bottom: 30px;
-      color: #ccc;
-    }
-
-    .input-group {
-      position: relative;
-      margin-bottom: 20px;
-    }
-
-    .input-group input {
-      width: 100%;
-      padding: 12px 40px 12px 15px;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      background: #333;
-      color: #fff;
-      outline: none;
-    }
-
-    .input-group i {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #00bfff;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 6px;
-      background-color: #00bfff;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #007acc;
-    }
-
-    .error-text {
-      color: #ff4d4d;
-      margin-top: 15px;
-      font-size: 14px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-
+<body class="login-page">
   <div class="marquee">PLEASE GIVE YOUR LOGIN CREDENTIALS</div>
 
-  <div class="login-box">
-    <h1 class="main-heading">WELCOME</h1>
-    <h2 class="sub-heading">ATTENDANCE PORTAL</h2>
-    <form onsubmit="return checkLogin()">
+  <div class="login-container" role="form" aria-label="Login form">
+    <h2 class="main-heading">WELCOME</h2>
+    <p class="sub-heading">ATTENDANCE PORTAL</p>
+    <form id="loginForm" autocomplete="off">
       <div class="input-group">
-        <input type="text" id="username" placeholder="Enter Username" required />
+        <input type="text" id="username" placeholder="Enter Username" required aria-label="Username" />
         <i class="fa fa-user"></i>
       </div>
       <div class="input-group">
-        <input type="password" id="password" placeholder="Enter Password" required />
-        <i class="fa fa-lock"></i>
+        <input type="password" id="password" placeholder="Enter Password" required aria-label="Password" />
+        <i class="fa fa-eye" id="togglePassword" title="Show/Hide Password"></i>
       </div>
-      <button type="submit">Login</button>
-      <p id="error" class="error-text"></p>
+      <button type="submit">LOGIN</button>
+      <p id="error" class="error-text" role="alert"></p>
     </form>
   </div>
 
   <script>
-    function checkLogin() {
-      const u = document.getElementById('username').value.trim();
-      const p = document.getElementById('password').value.trim();
-      const error = document.getElementById('error');
+    const loginForm = document.getElementById('loginForm');
+    const errorEl = document.getElementById('error');
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
 
-      if ((u === 'Admin_123' && p === 'Admin_123') || (u === 'Client_123' && p === 'Client_123')) {
-        error.innerText = '';
-        if (u.startsWith('Admin')) {
-          window.location.href = 'admin.html';
-        } else {
-          window.location.href = 'client.html';
-        }
-        return false;
-      } else {
-        error.innerText = '❌ Invalid credentials. Try again.';
-        return false;
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.type === 'password' ? 'text' : 'password';
+      passwordInput.type = type;
+      togglePassword.classList.toggle('fa-eye-slash');
+    });
+
+    loginForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim().toUpperCase();
+      const password = passwordInput.value.trim();
+      errorEl.innerText = '';
+
+      if (!username || !password) {
+        errorEl.innerText = '⚠️ Both fields are required.';
+        return;
       }
-    }
-  </script>
 
+      const isAdmin = username === 'ADMIN_123' && password === 'Admin_123';
+      const isClient = username === 'CLIENT_123' && password === 'Client_123';
+
+      if (isAdmin) {
+        window.location.href = 'admin.html';
+      } else if (isClient) {
+        window.location.href = 'client.html';
+      } else {
+        errorEl.innerText = '❌ Invalid credentials. Try again.';
+      }
+    });
+  </script>
 </body>
 </html>
