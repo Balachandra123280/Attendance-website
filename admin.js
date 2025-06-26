@@ -319,3 +319,23 @@ function filterAttendanceTable() {
     row.style.display = name.includes(input) ? "" : "none";
   });
 }
+// Attach sidebar button listeners after DOM is loaded
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById("btnManageHubs").addEventListener("click", () => showSection("manageHubsSection"));
+  document.getElementById("btnAddEmployee").addEventListener("click", () => showSection("addEmployeeSection"));
+  document.getElementById("btnViewEmployees").addEventListener("click", () => showSection("viewEmployeesSection"));
+  document.getElementById("btnMarkAttendance").addEventListener("click", () => showSection("markAttendanceSection"));
+  document.getElementById("btnMonthlyReport").addEventListener("click", () => showSection("monthlyReportSection"));
+});
+// Sidebar button listeners matching your HTML IDs
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.form-section').forEach(section => section.style.display = 'none');
+  document.getElementById("hubSection").style.display = 'block'; // default section on load
+
+  document.querySelector("button[onclick=\"showSection('hubSection')\"]").addEventListener("click", () => showSection("hubSection"));
+  document.querySelector("button[onclick=\"showSection('employeeSection')\"]").addEventListener("click", () => showSection("employeeSection"));
+  document.querySelector("button[onclick=\"showSection('viewEmployeeSection')\"]").addEventListener("click", () => showSection("viewEmployeeSection"));
+  document.querySelector("button[onclick=\"showSection('attendanceSection')\"]").addEventListener("click", () => showSection("attendanceSection"));
+  document.querySelector("button[onclick=\"showSection('monthlyReportSection')\"]").addEventListener("click", () => showSection("monthlyReportSection"));
+  document.querySelector("button[onclick=\"showSection('dailyReportSection')\"]").addEventListener("click", () => showSection("dailyReportSection"));
+});
