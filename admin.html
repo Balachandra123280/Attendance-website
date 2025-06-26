@@ -1,20 +1,129 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
+   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+ 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 60px;
+      background-color: #007bff;
+      color: white;
+      height: 100vh;
+      padding: 20px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: width 0.3s ease;
+      overflow: hidden;
+      position: fixed;
+      z-index: 2;
+    }
+    .sidebar.open { width: 220px; align-items: flex-start; }
+    .menu-toggle {
+      background-color: #0056b3;
+      color: white;
+      border: none;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .sidebar button {
+      background-color: #0056b3;
+      color: white;
+      border: none;
+      padding: 12px;
+      margin: 5px 0;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    .sidebar button:hover { background-color: #003f80; }
+    .content {
+      margin-left: 60px;
+      flex-grow: 1;
+      padding: 20px;
+      transition: margin-left 0.3s ease;
+      width: 100%;
+    }
+    .sidebar.open ~ .content { margin-left: 220px; }
+    .form-section {
+      display: none;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    .form-section h2 { margin-bottom: 20px; color: #007bff; }
+    input, select, button {
+      margin: 6px 0;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 100%;
+      max-width: 400px;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+    button {
+      background-color: #007bff;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover { background-color: #0056b3; }
+    .popup {
+      background-color: #28a745;
+      color: white;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      display: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+      height: 20px;
+    }
+    td[contenteditable="true"] {
+      background-color: white;
+      cursor: text;
+    }
+  </style>
 </head>
-<body>
-  <div class="sidebar">
+<body onload="showSection('attendanceSection')">
+  <div class="sidebar" id="sidebar">
+    <button class="menu-toggle" onclick="toggleMenu()">☰ MENU</button>
     <button onclick="showSection('hubSection')">🏢 Manage HUB & Checkpost</button>
     <button onclick="showSection('employeeSection')">👨‍💼 Add Employee</button>
     <button onclick="showSection('viewEmployeeSection')">📋 View / Edit / Delete Employees</button>
     <button onclick="showSection('attendanceSection')">📝 Mark Attendance</button>
     <button onclick="showSection('monthlyReportSection')">📆 Monthly Report</button>
     <button onclick="showSection('dailyReportSection')">📅 Daily Report</button>
-    <button onclick="exportToCSV()">⬇️ Export CSV</button>
+    <button onclick="downloadMonthlyReport()">⬇️ Export Monthly CSV</button>
+    <button onclick="generateDailyReport()">⬇️ Export Daily CSV</button>
   </div>
 
   <div class="content">
@@ -25,7 +134,6 @@
       <h2>🏢 Manage HUB & Checkpost</h2>
       <input type="text" id="newHubName" placeholder="Enter HUB Name" />
       <button onclick="addHub()">Add HUB</button>
-
       <select id="hubSelect"></select>
       <input type="text" id="newCheckpostName" placeholder="Enter Checkpost Name" />
       <button onclick="addCheckpost()">Add Checkpost</button>
@@ -42,7 +150,6 @@
       <input type="text" id="empIFSC" placeholder="IFSC Code" />
       <input type="text" id="empBankName" placeholder="Bank Name" />
       <input type="text" id="empPAN" placeholder="PAN Number" />
-
       <select id="empHubSelect" onchange="updateEmpCheckpostSelect()"></select>
       <select id="empCheckpostSelect"></select>
       <button onclick="addEmployee()">Add Employee</button>
@@ -51,22 +158,27 @@
     <!-- View / Edit / Delete Employees -->
     <div class="form-section" id="viewEmployeeSection">
       <h2>📋 View / Edit / Delete Employees</h2>
+      <input type="text" id="employeeSearchInput" placeholder="Search by name, mobile, hub, or checkpost" onkeyup="searchEmployee()" />
       <div id="employeeTable"></div>
     </div>
 
-    <!-- Mark Attendance -->
+    <!-- Attendance -->
     <div class="form-section" id="attendanceSection">
       <h2>📝 Mark Attendance</h2>
-      <select id="attendanceHubSelect" onchange="renderAttendance()"></select>
-      <input type="month" id="attendanceMonth" onchange="renderAttendance()" />
+      <input type="text" id="attendanceSearchInput" placeholder="Search employee..." onkeyup="filterAttendanceTable()" style="margin-bottom: 10px; padding: 8px; width: 100%; max-width: 400px;" />
+
+      <select id="attendanceHubSelect" onchange="selectAttendanceMonthHub()"></select>
+      <input type="month" id="attendanceMonth" onchange="selectAttendanceMonthHub()" />
+      <button onclick="saveAttendance()">💾 Save</button>
+      <button onclick="exportAttendanceCSV()">⬇️ Export CSV</button>
       <div id="attendanceTable"></div>
     </div>
 
     <!-- Monthly Report -->
     <div class="form-section" id="monthlyReportSection">
       <h2>📆 Monthly Report</h2>
-      <select id="reportMonthHubSelect" onchange="renderMonthlyReport()"></select>
-      <input type="month" id="reportMonth" onchange="renderMonthlyReport()" />
+      <select id="reportMonthHubSelect" onchange="downloadMonthlyReport()"></select>
+      <input type="month" id="reportMonth" onchange="downloadMonthlyReport()" />
       <div id="monthlyReportTable"></div>
     </div>
 
@@ -75,9 +187,9 @@
       <h2>📅 Daily Report</h2>
       <label for="reportHubSelect">Select HUB:</label>
       <select id="reportHubSelect"></select>
-
       <label for="reportDateInput">Select Date:</label>
       <input type="date" id="reportDateInput" />
+      <button onclick="generateDailyReport()">Generate Report</button>
       <div id="dailyReportTable" style="margin-top: 20px;"></div>
     </div>
   </div>
