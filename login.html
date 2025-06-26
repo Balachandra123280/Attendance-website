@@ -85,13 +85,22 @@
       background-color: #0099cc;
     }
 
-    .error-text {
+    .message-box {
       margin-top: 15px;
       font-size: 15px;
       font-weight: bold;
       padding: 10px;
       border-radius: 5px;
-      display: inline-block;
+      display: none;
+    }
+
+    .message-success {
+      color: #155724;
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+    }
+
+    .message-error {
       color: #721c24;
       background-color: #f8d7da;
       border: 1px solid #f5c6cb;
@@ -112,48 +121,41 @@
     <h1 class="main-heading">WELCOME</h1>
     <h2 class="sub-heading">ATTENDANCE PORTAL</h2>
 
-    <form onsubmit="return checkLogin()">
-      <input type="text" id="username" placeholder="Enter Username" required />
-      <input type="password" id="password" placeholder="Enter Password" required />
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Enter Username" aria-label="Username" required />
+      <input type="password" id="password" placeholder="Enter Password" aria-label="Password" required />
       <button type="submit">Login</button>
+      <p id="messageBox" class="message-box"></p>
     </form>
-
-    <p id="error" class="error-text" style="display: none;"></p>
   </div>
 
   <script>
-    function checkLogin() {
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
-      const errorBox = document.getElementById('error');
+      const msgBox = document.getElementById('messageBox');
 
-      // Clear previous message
-      errorBox.style.display = 'none';
-      errorBox.innerText = '';
+      // Clear previous
+      msgBox.className = "message-box";
+      msgBox.style.display = "none";
 
-      // Simple credential match
-      if ((username === 'Admin_123' && password === 'Admin_123') ||
-          (username === 'Client_123' && password === 'Client_123')) {
-        
-        // Redirect to respective dashboards
-        const redirectURL = username.startsWith('Admin') ? 'admin.html' : 'client.html';
-        errorBox.style.display = 'block';
-        errorBox.style.backgroundColor = '#d4edda';
-        errorBox.style.color = '#155724';
-        errorBox.style.border = '1px solid #c3e6cb';
-        errorBox.innerText = '✅ Login successful! Redirecting...';
+      const validAdmin = username === 'Admin_123' && password === 'Admin_123';
+      const validClient = username === 'Client_123' && password === 'Client_123';
 
+      if (validAdmin || validClient) {
+        const redirectURL = validAdmin ? 'admin.html' : 'client.html';
+        msgBox.classList.add("message-success");
+        msgBox.textContent = "✅ Login successful! Redirecting...";
+        msgBox.style.display = "block";
         setTimeout(() => window.location.href = redirectURL, 1000);
       } else {
-        errorBox.innerText = '❌ Invalid credentials. Please try again.';
-        errorBox.style.display = 'block';
-        errorBox.style.backgroundColor = '#f8d7da';
-        errorBox.style.color = '#721c24';
-        errorBox.style.border = '1px solid #f5c6cb';
+        msgBox.classList.add("message-error");
+        msgBox.textContent = "❌ Invalid credentials. Please try again.";
+        msgBox.style.display = "block";
       }
-
-      return false; // prevent form from submitting
-    }
+    });
   </script>
 
 </body>
