@@ -1,6 +1,6 @@
 // ========== Client Login Script ==========
 
-// Hardcoded client credentials (You can extend or move this to a backend in production)
+// Hardcoded client credentials (You can move this to backend/API in production)
 const clientCredentials = {
   client1: { password: "pass123", hub: "HUB 1", checkpost: "Checkpost A" },
   client2: { password: "client456", hub: "HUB 2", checkpost: "Checkpost B" },
@@ -12,30 +12,29 @@ function loginClient() {
   const passwordInput = document.getElementById("password");
   const msgBox = document.getElementById("loginMsg");
 
-  const username = usernameInput?.value.trim().toLowerCase(); // Normalize
-  const password = passwordInput?.value.trim();
+  if (!usernameInput || !passwordInput || !msgBox) return;
 
-  // Clear previous messages
+  const username = usernameInput.value.trim().toLowerCase();
+  const password = passwordInput.value.trim();
+
+  // Clear previous message and class
   msgBox.innerText = "";
-  msgBox.className = "";
+  msgBox.className = "login-msg";
 
-  // Validate presence of input fields
   if (!username || !password) {
     showLoginMessage("⚠️ Please enter both username and password.", "warning");
     return;
   }
 
-  // Check credentials
   const user = clientCredentials[username];
+
   if (user && user.password === password) {
-    // Store session info in localStorage
     localStorage.setItem("loggedInClient", username);
     localStorage.setItem("hub", user.hub);
     localStorage.setItem("checkpost", user.checkpost);
 
     showLoginMessage("✅ Login successful! Redirecting...", "success");
 
-    // Redirect after short delay
     setTimeout(() => {
       window.location.href = "employee.html";
     }, 1000);
@@ -44,26 +43,21 @@ function loginClient() {
   }
 }
 
-// Utility to display styled login messages
+// Utility to show styled login messages
 function showLoginMessage(message, type = "info") {
   const msgBox = document.getElementById("loginMsg");
-  msgBox.innerText = message;
+  if (!msgBox) return;
 
-  // Remove previous type classes
+  msgBox.innerText = message;
   msgBox.className = "login-msg";
 
-  // Add new style based on type
-  switch (type) {
-    case "success":
-      msgBox.classList.add("login-success");
-      break;
-    case "error":
-      msgBox.classList.add("login-error");
-      break;
-    case "warning":
-      msgBox.classList.add("login-warning");
-      break;
-    default:
-      msgBox.classList.add("login-info");
-  }
+  const typeClasses = {
+    success: "login-success",
+    error: "login-error",
+    warning: "login-warning",
+    info: "login-info"
+  };
+
+  msgBox.classList.add(typeClasses[type] || "login-info");
 }
+
